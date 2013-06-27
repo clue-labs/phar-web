@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{% block title %}phar project{% endblock %}</title>
+        <link rel="stylesheet" href="{{ docroot|default('/phar/') }}css/style.css" />
+    </head>
+    <body>
+        <div id="content">
+        {% block content %}
+        The content
+        {% endblock %}
+        </div>
+    </body>
+</html>

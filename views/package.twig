@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ package.name }} - phar project{% endblock %}
+
+{% block content %}
+<h1>{{ package.name }}</h1>
+<p>{{ package.description }}</p> <a href="https://packagist.org/packages/{{ package.name }}">More info on packagist.org</a>
+
+<ul>
+    <li style="margin-bottom:0.5em">
+      <strong><a href="{{ filename }}">Download latest</a></strong>
+    </li>
+{% for version in package.versions %}
+    <li>
+      <a href="{{ url('download', {vendor: "#{vendor}", name: "#{name}"}) }}?version={{version.version|escape}}">Download <strong>{{ version.version|escape }}</strong></a>
+      <span class="updated">updated on <time>{{ version.time|date }}</time></span>
+    
+    {% if version.bin %}
+      <pre>{{ version.bin|join(', ') }}</pre>
+    {% else %}
+      <p class="error">
+        <strong>Error:</strong>
+        Unable to create phar for package with no bin defined
+      </p>
+    {% endif %}
+    </li>
+{% endfor %}
+</ul>
+
+<a href="{{ url('vendor', {vendor: "#{vendor}"}) }}">More from vendor {{ vendor }}</a>
+
+{% endblock %}

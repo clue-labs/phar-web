@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ vendor }} - phar project{% endblock %}
+
+{% block content %}
+<h1>{{ vendor }}</h1>
+
+<ul>
+{% for package in packages %}
+ {# {{ url('package', {vendor: "#{vendor}", name: "#{package}"} ) }} --> #}
+    <li><a href="../{{ package|escape }}">{{ package|escape }}</a></li>
+{% endfor %}
+</ul>
+
+{% endblock %}
