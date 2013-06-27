@@ -1,5 +1,8 @@
 <?php
 
+use Clue\PharWeb\PackageManager;
+use Symfony\Component\HttpFoundation\Request;
+
 require_once __DIR__.'/../vendor/autoload.php';
 
 $app = new Silex\Application();
@@ -9,19 +12,19 @@ $app->register(new Silex\Provider\TwigServiceProvider(), array(
 ));
 $app->register(new Silex\Provider\UrlGeneratorServiceProvider());
 
+$app['package_manager'] = new PackageManager();
+
 // TODO: remove me
 $app['debug'] = true;
 $prefix = '/phar'; // '';
 //$app['routes']->addPrefix('/phar/');
-
 
 $app->get('/', function() use ($app) {
     return $app['twig']->render('index.twig');
 })->bind('homepage');
 
 $app->get($prefix . '/{vendor}/', function($vendor) use ($app) {
-    $client = new Packagist\Api\Client();
-    $packages = $client->all(array('vendor' => $vendor));
+    $packages = $app['package_manager']->getNamesOfPackagesForVendor($vendor);
 
     return $app['twig']->render('vendor.twig', array(
         'packages' => $packages,
@@ -29,22 +32,15 @@ $app->get($prefix . '/{vendor}/', function($vendor) use ($app) {
     ));
 })->bind('vendor');
 
-$app->get($prefix . '/{vendor}/{name}.phar', function ($vendor, $name) use ($app) {
-    return 'download ' . $vendor . ' / ' . $name;
+$app->get($prefix . '/{vendor}/{name}.phar', function ($vendor, $name, Request $request) use ($app) {
+    $package = $app['package_manager']->getPackage($vendor . '/' . $name);
+    $version = $request->get('version', null);
 
-    $client = new Packagist\Api\Client();
-    $package = $client->get($vendor . '/' . $name);
-
-    return $app['twig']->render('package.twig', array(
-        'package' => $package,
-        'vendor' => $vendor,
-        'filename' => $name . '.phar'
-    ));
+    return $app['package_manager']->requestDownload($package, $version);
 })->bind('download');
 
 $app->get($prefix . '/{vendor}/{name}', function ($vendor, $name) use ($app) {
-    $client = new Packagist\Api\Client();
-    $package = $client->get($vendor . '/' . $name);
+    $package = $app['package_manager']->getPackage($vendor . '/' . $name);
 
     return $app['twig']->render('package.twig', array(
         'package'  => $package,
