@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "48f97916697b67f1c7c2628b1432236e",
+    "hash": "874dfb8c1e2cff3b41057dae64bee71e",
     "packages": [
         {
             "name": "doctrine/inflector",
@@ -272,12 +272,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/KnpLabs/packagist-api.git",
-                "reference": "9ae01630c96b8bac645d1c9fdf7beaea69497371"
+                "reference": "bc31bcf9b0eaa4e1f3618565558c2d58646c7982"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/KnpLabs/packagist-api/zipball/9ae01630c96b8bac645d1c9fdf7beaea69497371",
-                "reference": "9ae01630c96b8bac645d1c9fdf7beaea69497371",
+                "url": "https://api.github.com/repos/KnpLabs/packagist-api/zipball/bc31bcf9b0eaa4e1f3618565558c2d58646c7982",
+                "reference": "bc31bcf9b0eaa4e1f3618565558c2d58646c7982",
                 "shasum": ""
             },
             "require": {
@@ -317,7 +317,7 @@
                 "composer",
                 "packagist"
             ],
-            "time": "2013-03-27 19:33:08"
+            "time": "2013-06-27 18:33:46"
         },
         {
             "name": "pimple/pimple",
