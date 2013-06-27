@@ -2,6 +2,10 @@
 
 namespace Clue\PharWeb;
 
+use Symfony\Component\HttpFoundation\Response;
+
+use Symfony\Component\HttpFoundation\StreamedResponse;
+
 use Packagist\Api\Result\Package;
 use Packagist\Api\Client as PackagistClient;
 use BadMethodCallException;
@@ -56,6 +60,16 @@ class PackageManager
 
         $tag = $package->getName() . ':' . $version . '@' . $timestamp;
 
-        return 'download ' . $tag;
+        $outfile = sys_get_temp_dir() . '/' . md5($tag) . '.phar';
+
+        chdir('/home/me/workspace/phar-composer/');
+        exec('php -d phar.readonly=off bin/phar-composer build ' . escapeshellarg($package->getName() . ':' . $version) . ' ' . escapeshellarg($outfile) . ' 2>&1');
+
+        return new StreamedResponse(function() use ($outfile) {
+            readfile($outfile);
+        }, 201, array(
+            'Content-Type' => 'application/octet-stream',
+            'Content-Length' => filesize($outfile)
+        ));
     }
 }
