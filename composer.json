@@ -3,7 +3,9 @@
         "silex/silex": "~1",
         "knplabs/packagist-api": "dev-master",
         "twig/twig": ">=1.8,<2.0-dev",
-        "symfony/twig-bridge": "~2.3"
+        "symfony/twig-bridge": "~2.3",
+        "fresque/fresque": "dev-master",
+        "kamisama/php-resque-ex": "~1.2"
     },
     "autoload": {
         "psr-0": { "Clue\\PharWeb": "src/" }
