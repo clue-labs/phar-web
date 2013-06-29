@@ -10,6 +10,9 @@ use Packagist\Api\Result\Package;
 use Packagist\Api\Client as PackagistClient;
 use BadMethodCallException;
 use InvalidArgumentException;
+use UnexpectedValueException;
+use Resque;
+use Resque_Job_Status;
 
 class PackageManager
 {
@@ -60,10 +63,35 @@ class PackageManager
 
         $tag = $package->getName() . ':' . $version . '@' . $timestamp;
 
-        $outfile = sys_get_temp_dir() . '/' . md5($tag) . '.phar';
+        if (true) {
+            $outfile = sys_get_temp_dir() . '/' . md5($tag) . '.phar';
 
-        chdir('/home/me/workspace/phar-composer/');
-        exec('php -d phar.readonly=off bin/phar-composer build ' . escapeshellarg($package->getName() . ':' . $version) . ' ' . escapeshellarg($outfile) . ' 2>&1');
+            $jid = Resque::enqueue('build', 'Clue\\PharWeb\\Job\\Build', array(
+                'package' => $package->getName(),
+                'version' => $version,
+                'outfile' => $outfile
+            ), true);
+        }
+
+        $sob = new Resque_Job_Status($jid);
+
+        do {
+            $status = $sob->get();
+
+            if ($status === Resque_Job_Status::STATUS_COMPLETE) {
+                break;
+            }
+
+            if ($status === false) {
+                throw new UnexpectedValueException('Invalid job ID');
+            }
+
+            if ($status === Resque_Job_Status::STATUS_FAILED) {
+                throw new UnexpectedValueException('Job failed');
+            }
+
+            sleep(1);
+        } while (true);
 
         return new StreamedResponse(function() use ($outfile) {
             readfile($outfile);
