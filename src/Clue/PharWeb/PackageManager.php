@@ -2,6 +2,8 @@
 
 namespace Clue\PharWeb;
 
+use Symfony\Component\HttpFoundation\RedirectResponse;
+
 use Symfony\Component\HttpFoundation\Response;
 
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -62,37 +64,46 @@ class PackageManager
         $timestamp = strtotime($versionInfo->getTime());
 
         $tag = $package->getName() . ':' . $version . '@' . $timestamp;
+        $outfile = sys_get_temp_dir() . '/' . md5($tag) . '.phar';
 
-        if (true) {
-            $outfile = sys_get_temp_dir() . '/' . md5($tag) . '.phar';
+        $redis = Resque::redis();
+        $jid = $redis->GET($tag);
+        if ($jid === null) {
+            // TODO: lock for very short duration
 
-            $jid = Resque::enqueue('build', 'Clue\\PharWeb\\Job\\Build', array(
-                'package' => $package->getName(),
-                'version' => $version,
-                'outfile' => $outfile
-            ), true);
+            $jid = $redis->GET($tag);
+
+            // check if job is still unknown (so avoid this race condition)
+            if ($jid === null) {
+                $jid = Resque::enqueue('build', 'Clue\\PharWeb\\Job\\Build', array(
+                    'package' => $package->getName(),
+                    'version' => $version,
+                    'outfile' => $outfile
+                ), true);
+
+                $redis->SET($tag, $jid);
+                // TODO: unlock
+            }
         }
 
         $sob = new Resque_Job_Status($jid);
+        $status = $sob->get();
 
-        do {
-            $status = $sob->get();
+        if ($status === false) {
+            throw new UnexpectedValueException('Invalid job ID');
+        }
 
-            if ($status === Resque_Job_Status::STATUS_COMPLETE) {
-                break;
-            }
+        if ($status === Resque_Job_Status::STATUS_FAILED) {
+            throw new UnexpectedValueException('Job failed');
+        }
 
-            if ($status === false) {
-                throw new UnexpectedValueException('Invalid job ID');
-            }
-
-            if ($status === Resque_Job_Status::STATUS_FAILED) {
-                throw new UnexpectedValueException('Job failed');
-            }
-
+        if ($status !== Resque_Job_Status::STATUS_COMPLETE) {
+            $waiting = 1;
             sleep(1);
-        } while (true);
+            return new RedirectResponse('?version=' . $version . '&waiting=' . $waiting, 302);
+        }
 
+        // if complete:
         return new StreamedResponse(function() use ($outfile) {
             readfile($outfile);
         }, 201, array(
