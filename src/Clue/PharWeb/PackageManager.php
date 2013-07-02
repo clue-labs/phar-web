@@ -90,11 +90,11 @@ class PackageManager
         $status = $sob->get();
 
         if ($status === false) {
-            throw new UnexpectedValueException('Invalid job ID');
+            throw new UnexpectedValueException('Found job ID "' . $jid . '", but could not track its status');
         }
 
         if ($status === Resque_Job_Status::STATUS_FAILED) {
-            throw new UnexpectedValueException('Job failed');
+            throw new UnexpectedValueException('Job with ID "' . $jid . '" failed');
         }
 
         if ($status !== Resque_Job_Status::STATUS_COMPLETE) {
