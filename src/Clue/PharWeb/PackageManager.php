@@ -35,6 +35,11 @@ class PackageManager
         return $packages;
     }
 
+    public function getStability()
+    {
+        return $this->stability;
+    }
+
     public function getPackage($packagename)
     {
         return $this->client->get($packagename);
@@ -58,7 +63,7 @@ class PackageManager
     public function requestDownload(Package $package, $version = null)
     {
         if ($version === null) {
-            $version = $this->getVersionDefault($package);
+            $version = $this->getVersionDefault($package)->getVersion();
             return new RedirectResponse('?version=' . $version, 302);
         }
 
