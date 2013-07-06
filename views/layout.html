@@ -20,7 +20,7 @@
 	          <div class="nav-collapse collapse">
 	            <form class="form-search navbar-form pull-right">
 					<div class="input-append">
-					<input type="text" class="span2 search-query" placeholder="Search phar packages" />
+					<input type="text" class="span2 search-query" placeholder="Search phar packages" data-provide="typeahead" data-source="['clue/test', 'composer', 'phinx']"/>
 					<button type="submit" class="btn"><i class="icon-search"></i> </button>
 					</div>
 			    </form>
@@ -50,5 +50,7 @@
           </div>
         </footer>
       </div> <!-- /container -->
+      <script src="http://code.jquery.com/jquery.js"></script>
+      <script src="{{ docroot|default('/phar/') }}js/bootstrap.min.js"></script>
     </body>
 </html>
