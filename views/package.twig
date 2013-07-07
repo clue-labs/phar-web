@@ -8,40 +8,49 @@
 <a href="https://packagist.org/packages/{{ package.name }}">More info on packagist.org</a>
 
 <h2>Download available versions</h2>
-<dl class="dl-horizontal">
-{% if stable %}
-    <dt>latest stable</dt>
-    <dd style="margin-bottom:0.5em">
-      <strong><a href="{{ filename }}" class="btn btn-primary">Download {{stable}}</a></strong>
-    </dd>
-{% else %}
-    <dt>latest stable</dt>
-    <dd style="margin-bottom:0.5em">
-      <strong><span class="btn btn-primary disabled">Download latest stable</span></strong>
-      <p class="text-warning"><i class="icon-warning-sign"></i> No stable release found</p>
-    </dd>
-{% endif %}
-{% for version in package.versions %}
-    <dt>{{version.version|escape}}</dt>
-    <dd>
-      <a href="{{ url('download', {vendor: "#{vendor}", name: "#{name}"}) }}?version={{version.version|escape}}" class="btn btn-primary">Download <strong>{{ version.version|escape }}</strong></a>
-      
-      <p>
-        <span class="updated">updated on <time>{{ version.time|date }}</time></span> <br />
-      
-    {% if version.bin %}
-        <strong class="label">Executable:</strong>
-        <code>{{ version.bin|join(', ') }}</code>
-    {% else %}
-        <p class="text-warning">
-          <strong class="label">Error:</strong>
-          Unable to create phar for package with no bin defined
-        </p>
-    {% endif %}
-      </p>
-    </dd>
-{% endfor %}
-</dl>
+
+<div class="tabbable tabs-left">
+    <ul class="nav nav-tabs">
+        {% for stability in stabilities|keys %}
+        <li {% if loop.first %} class="active"{% endif %}>
+            <a data-toggle="tab" href="#{{ stability }}">{{ stability }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+    <div class="tab-content">
+    {% for stability, versions in stabilities %}
+    <div class="tab-pane{% if loop.first %} active{% endif %}" id="{{ stability }}">
+        <dl class="dl-horizontal">
+            {% if stability == "stable" %}
+            <dt>latest stable</dt>
+            <dd style="margin-bottom:0.5em">
+                <strong><a href="{{ filename }}" class="btn btn-primary">Download stable</a></strong>
+            </dd>
+            {% endif %}
+            {% for version in versions %}
+            <dt>{{version.version|escape}}</dt>
+            <dd>
+                <a href="{{ url('download', {vendor: "#{vendor}", name: "#{name}"}) }}?version={{version.version|escape}}" class="btn btn-primary">Download <strong>{{ version.version|escape }}</strong></a>
+                <p>
+                    <span class="updated">updated on <time>{{ version.time|date }}</time></span> <br />
+              
+                    {% if version.bin %}
+                    <strong class="label">Executable:</strong>
+                    <code>{{ version.bin|join(', ') }}</code>
+                    {% else %}
+                    <p class="text-warning">
+                        <strong class="label">Error:</strong>
+                        Unable to create phar for package with no bin defined
+                    </p>
+                    {% endif %}
+                </p>
+            </dd>
+            {% endfor %}
+        </dl>
+    </div>
+    {% endfor %}
+    </div>
+</div>
 
 <a href="{{ url('vendor', {vendor: "#{vendor}"}) }}">More from vendor {{ vendor }}</a>
 

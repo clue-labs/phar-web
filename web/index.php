@@ -45,20 +45,14 @@ $app->get($prefix . '/{vendor}/{name}', function ($vendor, $name) use ($app) {
     $pm = $app['package_manager'];
 
     $package = $pm->getPackage($vendor . '/' . $name);
-
-    try {
-        $stable = $pm->getVersionDefault($package);
-    }
-    catch (Exception $e) {
-        $stable = null;
-    }
+    $stabilities = $pm->getStability()->getVersionsPerStability($package);
 
     return $app['twig']->render('package.twig', array(
-        'package'  => $package,
-        'stable'   => $stable,
-        'vendor'   => $vendor,
-        'name'     => $name,
-        'filename' => $name . '.phar'
+        'package'     => $package,
+        'stabilities' => $stabilities,
+        'vendor'      => $vendor,
+        'name'        => $name,
+        'filename'    => $name . '.phar'
     ));
 })->bind('package');
 
