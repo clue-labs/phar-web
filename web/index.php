@@ -52,4 +52,16 @@ $app->get($prefix . '/{vendor}/{name}', function ($vendor, $name) use ($app) {
     ));
 })->bind('package');
 
+$app->get($prefix . '/about', function() {
+    return 'about';
+})->bind('about');
+
+$app->get($prefix . '/stats', function() {
+    return 'stats';
+})->bind('stats');
+
+$app->get($prefix . '/api', function() {
+    return 'api';
+})->bind('api');
+
 $app->run();

@@ -20,7 +20,7 @@
 	          <div class="nav-collapse collapse">
 	            <form class="form-search navbar-form pull-right">
 					<div class="input-append">
-					<input type="text" class="span2 search-query" placeholder="Search project" />
+					<input type="text" class="span2 search-query" placeholder="Search phar packages" />
 					<button type="submit" class="btn"><i class="icon-search"></i> </button>
 					</div>
 			    </form>
@@ -39,22 +39,16 @@
 	    
 	    <footer>
 	      <hr />
-    <div class="container">
-        <div class="row">
-            <div class="span9">
-              <ul class="inline">
-                <li><a href=""><i class="icon-home"></i> Home</a></li>
-                <li><a href="">About</a></li>
-                <li><a href="">Stats</a></li>
-                <li><a href="">Developers / API</a></li>
-              </ul>
-            </div>
-            <div class="span3">
-                <p>2013 by <a href="">@clue</a></p>
-            </div>
-        </div>
-    </div>
-</footer>
+          <ul class="inline pull-left">
+            <li><a href="{{ url('homepage') }}"><i class="icon-home"></i> Home</a></li>
+            <li><a href="{{ url('about') }}"><i class="icon-info-sign"></i> About</a></li>
+            <li><a href="{{ url('stats') }}"><i class="icon-heart"></i> Stats</a></li>
+            <li><a href="{{ url('api') }}"><i class="icon-cog"></i> Developers / API</a></li>
+          </ul>
+          <div class="pull-right">
+            <p>2013 by <a href="">@clue</a></p>
+          </div>
+        </footer>
       </div> <!-- /container -->
     </body>
 </html>
