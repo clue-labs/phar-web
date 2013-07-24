@@ -2,13 +2,59 @@
 <html>
     <head>
         <title>{% block title %}phar project{% endblock %}</title>
-        <link rel="stylesheet" href="{{ docroot|default('/phar/') }}css/style.css" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link href="{{ docroot|default('/phar/') }}css/bootstrap.css" rel="stylesheet" media="screen" />
+        <link href="{{ docroot|default('/phar/') }}css/bootstrap-responsive.css" rel="stylesheet" media="screen" />
+        <link href="{{ docroot|default('/phar/') }}css/style.css" rel="stylesheet" />
     </head>
     <body>
-        <div id="content">
-        {% block content %}
-        The content
-        {% endblock %}
+	    <div class="navbar navbar-inverse navbar-fixed-top">
+	      <div class="navbar-inner">
+	        <div class="container">
+	          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+	            <span class="icon-bar"></span>
+	            <span class="icon-bar"></span>
+	            <span class="icon-bar"></span>
+	          </button>
+	          <a class="brand" href="{{ docroot|default('/phar/') }}">Phar project</a>
+	          <div class="nav-collapse collapse">
+	            <form class="form-search navbar-form pull-right">
+					<div class="input-append">
+					<input type="text" class="span2 search-query" placeholder="Search project" />
+					<button type="submit" class="btn"><i class="icon-search"></i> </button>
+					</div>
+			    </form>
+	          </div><!--/.nav-collapse -->
+	        </div>
+	      </div>
+	    </div>
+	
+	    <div class="container">
+	{% block content %}
+       The content
+     {% endblock %}
+	      
+	
+	    
+	    
+	    <footer>
+	      <hr />
+    <div class="container">
+        <div class="row">
+            <div class="span9">
+              <ul class="inline">
+                <li><a href=""><i class="icon-home"></i> Home</a></li>
+                <li><a href="">About</a></li>
+                <li><a href="">Stats</a></li>
+                <li><a href="">Developers / API</a></li>
+              </ul>
+            </div>
+            <div class="span3">
+                <p>2013 by <a href="">@clue</a></p>
+            </div>
         </div>
+    </div>
+</footer>
+      </div> <!-- /container -->
     </body>
 </html>

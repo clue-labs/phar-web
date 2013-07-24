@@ -4,28 +4,36 @@
 
 {% block content %}
 <h1>{{ package.name }}</h1>
-<p>{{ package.description }}</p> <a href="https://packagist.org/packages/{{ package.name }}">More info on packagist.org</a>
+<p class="lead">{{ package.description }}</p>
+<a href="https://packagist.org/packages/{{ package.name }}">More info on packagist.org</a>
 
-<ul>
-    <li style="margin-bottom:0.5em">
-      <strong><a href="{{ filename }}">Download latest</a></strong>
-    </li>
+<h2>Download available versions</h2>
+<dl class="dl-horizontal">
+    <dt>latest</dt>
+    <dd style="margin-bottom:0.5em">
+      <strong><a href="{{ filename }}" class="btn btn-primary">Download latest</a></strong>
+    </dd>
 {% for version in package.versions %}
-    <li>
-      <a href="{{ url('download', {vendor: "#{vendor}", name: "#{name}"}) }}?version={{version.version|escape}}">Download <strong>{{ version.version|escape }}</strong></a>
-      <span class="updated">updated on <time>{{ version.time|date }}</time></span>
-    
+    <dt>{{version.version|escape}}</dt>
+    <dd>
+      <a href="{{ url('download', {vendor: "#{vendor}", name: "#{name}"}) }}?version={{version.version|escape}}" class="btn btn-primary">Download <strong>{{ version.version|escape }}</strong></a>
+      
+      <p>
+        <span class="updated">updated on <time>{{ version.time|date }}</time></span> <br />
+      
     {% if version.bin %}
-      <pre>{{ version.bin|join(', ') }}</pre>
+        <strong class="label">Executable:</strong>
+        <code>{{ version.bin|join(', ') }}</code>
     {% else %}
-      <p class="error">
-        <strong>Error:</strong>
-        Unable to create phar for package with no bin defined
-      </p>
+        <p class="text-warning">
+          <strong class="label">Error:</strong>
+          Unable to create phar for package with no bin defined
+        </p>
     {% endif %}
-    </li>
+      </p>
+    </dd>
 {% endfor %}
-</ul>
+</dl>
 
 <a href="{{ url('vendor', {vendor: "#{vendor}"}) }}">More from vendor {{ vendor }}</a>
 

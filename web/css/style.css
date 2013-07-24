@@ -1,4 +1,8 @@
+body {
+    padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+}
 
+/*
 body {
 	background-color: #eee;;
 }
@@ -8,4 +12,9 @@ body {
     padding: 10px 5px;
     margin: 0 auto;
     max-width: 800px;	
+}
+*/
+
+footer {
+	margin-top: 40px;
 }
