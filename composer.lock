@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "77c264245ad435d5fac4dafa8e528055",
+    "hash": "a2242d8596d9d0bf815e1a9ad645d246",
     "packages": [
         {
             "name": "doctrine/inflector",
@@ -1150,6 +1150,33 @@
                 "templating"
             ],
             "time": "2013-06-06 06:06:01"
+        },
+        {
+            "name": "twitter/bootstrap",
+            "version": "v2.3.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/twitter/bootstrap.git",
+                "reference": "v2.3.2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/twitter/bootstrap/zipball/v2.3.2",
+                "reference": "v2.3.2",
+                "shasum": ""
+            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "Sleek, intuitive, and powerful front-end framework for faster and easier web development.",
+            "homepage": "http://twitter.github.com/bootstrap/",
+            "keywords": [
+                "bootstrap",
+                "css"
+            ],
+            "time": "2013-05-17 17:26:09"
         },
         {
             "name": "zetacomponents/base",
