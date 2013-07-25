@@ -42,10 +42,20 @@ $app->get($prefix . '/{vendor}/{name}.phar', function ($vendor, $name, Request $
 })->bind('download');
 
 $app->get($prefix . '/{vendor}/{name}', function ($vendor, $name) use ($app) {
-    $package = $app['package_manager']->getPackage($vendor . '/' . $name);
+    $pm = $app['package_manager'];
+
+    $package = $pm->getPackage($vendor . '/' . $name);
+
+    try {
+        $stable = $pm->getVersionDefault($package);
+    }
+    catch (Exception $e) {
+        $stable = null;
+    }
 
     return $app['twig']->render('package.twig', array(
         'package'  => $package,
+        'stable'   => $stable,
         'vendor'   => $vendor,
         'name'     => $name,
         'filename' => $name . '.phar'
