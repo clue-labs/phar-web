@@ -21,6 +21,7 @@ class PackageManager
     public function __construct()
     {
         $this->client = new PackagistClient();
+        $this->stability = new Stability();
     }
 
     public function getNamesOfPackagesForVendor($vendor)
@@ -51,13 +52,14 @@ class PackageManager
 
     public function getVersionDefault($package)
     {
-        throw new BadMethodCallException('Error, unable to find default version');
+        return $this->stability->getVersionStability($package, 'stable');
     }
 
     public function requestDownload(Package $package, $version = null)
     {
         if ($version === null) {
             $version = $this->getVersionDefault($package);
+            return new RedirectResponse('?version=' . $version, 302);
         }
 
         $versionInfo = $this->getVersionInfo($package, $version);
