@@ -4,6 +4,7 @@ namespace Clue\PharWeb;
 
 use Packagist\Api\Result\Package;
 use Composer\Package\Version\VersionParser;
+use UnderflowException;
 
 class Stability
 {
@@ -27,7 +28,7 @@ class Stability
         foreach ($this->getVersionsStability($package, $stability) as $version) {
             return $version;
         }
-        throw new BadMethodCallException('Error, unable to find default version');
+        throw new UnderflowException('Error, unable to find default version');
     }
 
     public function getStabilityLevel($stability)
