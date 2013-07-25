@@ -6,7 +6,8 @@
         "symfony/twig-bridge": "~2.3",
         "fresque/fresque": "dev-master",
         "kamisama/php-resque-ex": "~1.2",
-        "twitter/bootstrap": "~2.3"
+        "twitter/bootstrap": "~2.3",
+        "composer/composer": "@alpha"
     },
     "autoload": {
         "psr-0": { "Clue\\PharWeb": "src/" }
