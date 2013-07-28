@@ -45,41 +45,24 @@ class PackageManager
         return Package::load($this, $packagename);
     }
 
-    public function requestDownload(Package $package, $version = null)
+    public function getRedis()
     {
-        if ($version === null) {
-            $version = $package->getVersionDefault()->getVersion();
-            return new RedirectResponse('?version=' . $version, 302);
+        return Resque::redis();
+    }
+
+    public function requestDownload(Package $package, $versionIdentifier = null)
+    {
+        if ($versionIdentifier === null) {
+            $versionIdentifier = $package->getVersionDefault()->getId();
+            return new RedirectResponse('?version=' . $versionIdentifier, 302);
         }
 
-        $versionInfo = $package->getVersionInfo($version);
-        $timestamp = strtotime($versionInfo->getTime());
+        $version = $package->getVersion($versionIdentifier);
 
-        $tag = $package->getName() . ':' . $version . '@' . $timestamp;
-        $outfile = sys_get_temp_dir() . '/' . md5($tag) . '.phar';
+        $version->doEnsureHasJob();
 
-        $redis = Resque::redis();
-        $jid = $redis->GET($tag);
-        if ($jid === null) {
-            // TODO: lock for very short duration
-
-            $jid = $redis->GET($tag);
-
-            // check if job is still unknown (so avoid this race condition)
-            if ($jid === null) {
-                $jid = Resque::enqueue('build', 'Clue\\PharWeb\\Job\\Build', array(
-                    'package' => $package->getName(),
-                    'version' => $version,
-                    'outfile' => $outfile
-                ), true);
-
-                $redis->SET($tag, $jid);
-                // TODO: unlock
-            }
-        }
-
-        $sob = new Resque_Job_Status($jid);
-        $status = $sob->get();
+        $jid = $version->getIdOfJob();
+        $status = $version->getStatus();
 
         if ($status === false) {
             throw new UnexpectedValueException('Found job ID "' . $jid . '", but could not track its status');
@@ -92,8 +75,10 @@ class PackageManager
         if ($status !== Resque_Job_Status::STATUS_COMPLETE) {
             $waiting = 1;
             sleep(1);
-            return new RedirectResponse('?version=' . $version . '&waiting=' . $waiting, 302);
+            return new RedirectResponse('?version=' . $versionIdentifier . '&waiting=' . $waiting, 302);
         }
+
+        $outfile = $version->getOutfile();
 
         // if complete:
         return new StreamedResponse(function() use ($outfile) {

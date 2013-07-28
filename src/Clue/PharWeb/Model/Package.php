@@ -73,10 +73,16 @@ class Package
         return $this->manager->getStability()->getVersionsPerStability($this->getVersions());
     }
 
-    public function getVersionInfo($versionString)
+    /**
+     *
+     * @param unknown_type $versionString
+     * @throws InvalidArgumentException
+     * @return Version
+     */
+    public function getVersion($versionString)
     {
         foreach ($this->getVersions() as $version) {
-            if ($version->getVersion() === $versionString) {
+            if ($version->getId() === $versionString) {
                 return $version;
             }
         }
@@ -95,6 +101,6 @@ class Package
 
     public function getFilename()
     {
-
+        return $this->getNameSub() . '.phar';
     }
 }
