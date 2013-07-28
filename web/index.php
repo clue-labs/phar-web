@@ -12,7 +12,12 @@ Request::setTrustedProxies(array('127.0.0.1'));
 $app->register(new Silex\Provider\TwigServiceProvider(), array(
     'twig.path' => __DIR__.'/../views',
 ));
+
 $app->register(new Silex\Provider\UrlGeneratorServiceProvider());
+
+$app->register(new Silex\Provider\TranslationServiceProvider(), array(
+    'locale_fallback' => 'en',
+));
 
 $app['package_manager'] = new PackageManager();
 
