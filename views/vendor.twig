@@ -4,6 +4,9 @@
 
 {% block content %}
 <h1>{{ vendor }}</h1>
+<p class="lead">Vendor <em>{{ vendor }}</em> has {% set count=packages|length %}{% transchoice count %}
+{0} no packages|{1} the following package|]1,Inf] the following %count% packages
+{% endtranschoice %} listed on <a href="https://packagist.org/packages/{{ vendor }}/">packagist.org</a>:</p>
 
 <ul>
 {% for package in packages %}
