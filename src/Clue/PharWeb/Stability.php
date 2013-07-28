@@ -28,7 +28,7 @@ class Stability
         $ret = array();
 
         foreach ($versions as $version) {
-            if ($this->getStabilityLevel(VersionParser::parseStability($version->getVersion())) == $level) {
+            if ($this->getStabilityLevel(VersionParser::parseStability($version->getId())) == $level) {
                 $ret []= $version;
             }
         }

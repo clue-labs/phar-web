@@ -59,7 +59,13 @@ class Package
 
     public function getVersions()
     {
-        return $this->packagist->getVersions();
+        $versions = array();
+
+        foreach ($this->packagist->getVersions() as $version) {
+            $versions[$version->getVersion()] = new Version($this->manager, $version);
+        }
+
+        return $versions;
     }
 
     public function getVersionsPerStability()

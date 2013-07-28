@@ -31,11 +31,11 @@
             </dd>
             {% endif %}
             {% for version in versions %}
-            <dt>{{version.version|escape}}</dt>
+            <dt>{{version.id|escape}}</dt>
             <dd>
-                <a href="{{ url('download', {vendor: "#{vendorname}", name: "#{package.namesub}"}) }}?version={{version.version|escape}}" class="btn btn-primary">Download <strong>{{ version.version|escape }}</strong></a>
+                <a href="{{ url('download', {vendor: "#{vendorname}", name: "#{package.namesub}"}) }}?version={{version.id|escape}}" class="btn btn-primary">Download <strong>{{ version.id|escape }}</strong></a>
                 <p>
-                    <span class="updated">updated on <time>{{ version.time|date }}</time></span> <br />
+                    <span class="updated">updated on <time>{{ version.date|date }}</time></span> <br />
               
                     {% if version.bin %}
                     <strong class="label">Executable:</strong>
