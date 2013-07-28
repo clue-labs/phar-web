@@ -8,14 +8,12 @@ use UnderflowException;
 
 class Stability
 {
-    public function getVersionsPerStability(Package $package)
+    public function getVersionsPerStability($allversions)
     {
-        $versions = $package->getVersions();
-
         $levels = array();
 
         foreach ($this->getStabilities() as $level) {
-            $versions = $this->getVersionsStability($package, $level);
+            $versions = $this->getVersionsStability($allversions, $level);
             if ($versions) {
                 $levels[$level] = $versions;
             }
@@ -24,12 +22,12 @@ class Stability
         return $levels;
     }
 
-    public function getVersionsStability(Package $package, $stability)
+    public function getVersionsStability($versions, $stability)
     {
         $level = $this->getStabilityLevel($stability);
         $ret = array();
 
-        foreach ($package->getVersions() as $version) {
+        foreach ($versions as $version) {
             if ($this->getStabilityLevel(VersionParser::parseStability($version->getVersion())) == $level) {
                 $ret []= $version;
             }
@@ -38,9 +36,9 @@ class Stability
         return $ret;
     }
 
-    public function getVersionStability(Package $package, $stability)
+    public function getVersionStability($versions, $stability)
     {
-        foreach ($this->getVersionsStability($package, $stability) as $version) {
+        foreach ($this->getVersionsStability($versions, $stability) as $version) {
             return $version;
         }
         throw new UnderflowException('Error, unable to find default version');

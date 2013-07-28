@@ -1,4 +1,7 @@
 {% extends "layout.html" %}
+{% set stabilities = package.versionsPerStability %}
+{% set vendorname = package.nameOfVendor %}
+{% set filename = package.filename %}
 
 {% block title %}{{ package.name }} - phar project{% endblock %}
 
@@ -30,7 +33,7 @@
             {% for version in versions %}
             <dt>{{version.version|escape}}</dt>
             <dd>
-                <a href="{{ url('download', {vendor: "#{vendor}", name: "#{name}"}) }}?version={{version.version|escape}}" class="btn btn-primary">Download <strong>{{ version.version|escape }}</strong></a>
+                <a href="{{ url('download', {vendor: "#{vendorname}", name: "#{package.namesub}"}) }}?version={{version.version|escape}}" class="btn btn-primary">Download <strong>{{ version.version|escape }}</strong></a>
                 <p>
                     <span class="updated">updated on <time>{{ version.time|date }}</time></span> <br />
               
@@ -52,6 +55,6 @@
     </div>
 </div>
 
-<a href="{{ url('vendor', {vendor: "#{vendor}"}) }}">More from vendor {{ vendor }}</a>
+<a href="{{ url('vendor', {vendor: "#{vendorname}"}) }}">More from vendor {{ vendorname }}</a>
 
 {% endblock %}

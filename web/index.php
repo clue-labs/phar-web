@@ -31,10 +31,9 @@ $app->get('/', function() use ($app) {
 })->bind('homepage');
 
 $app->get($prefix . '/{vendor}/', function($vendor) use ($app) {
-    $packages = $app['package_manager']->getNamesOfPackagesForVendor($vendor);
+    $vendor = $app['package_manager']->getVendor($vendor);
 
     return $app['twig']->render('vendor.twig', array(
-        'packages' => $packages,
         'vendor' => $vendor
     ));
 })->bind('vendor');
@@ -53,11 +52,7 @@ $app->get($prefix . '/{vendor}/{name}', function ($vendor, $name) use ($app) {
     $stabilities = $pm->getStability()->getVersionsPerStability($package);
 
     return $app['twig']->render('package.twig', array(
-        'package'     => $package,
-        'stabilities' => $stabilities,
-        'vendor'      => $vendor,
-        'name'        => $name,
-        'filename'    => $name . '.phar'
+        'package'     => $package
     ));
 })->bind('package');
 

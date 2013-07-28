@@ -2,13 +2,11 @@
 
 namespace Clue\PharWeb;
 
+use Clue\PharWeb\Model\Vendor;
+use Clue\PharWeb\Model\Package;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-
 use Symfony\Component\HttpFoundation\Response;
-
 use Symfony\Component\HttpFoundation\StreamedResponse;
-
-use Packagist\Api\Result\Package;
 use Packagist\Api\Client as PackagistClient;
 use BadMethodCallException;
 use InvalidArgumentException;
@@ -18,21 +16,13 @@ use Resque_Job_Status;
 
 class PackageManager
 {
+    private $client;
+    private $stability;
+
     public function __construct()
     {
         $this->client = new PackagistClient();
         $this->stability = new Stability();
-    }
-
-    public function getNamesOfPackagesForVendor($vendor)
-    {
-        $packages = $this->client->all(array('vendor' => $vendor));
-
-        if (!$packages) {
-            throw new InvalidArgumentException('Invalid vendor name');
-        }
-
-        return $packages;
     }
 
     public function getStability()
@@ -40,34 +30,29 @@ class PackageManager
         return $this->stability;
     }
 
+    public function getClient()
+    {
+        return $this->client;
+    }
+
+    public function getVendor($vendorname)
+    {
+        return Vendor::load($this, $vendorname);
+    }
+
     public function getPackage($packagename)
     {
-        return $this->client->get($packagename);
-    }
-
-    public function getVersionInfo(Package $package, $versionString)
-    {
-        foreach ($package->getVersions() as $version) {
-            if ($version->getVersion() === $versionString) {
-                return $version;
-            }
-        }
-        throw new InvalidArgumentException('Error, the requested version does not exist!');
-    }
-
-    public function getVersionDefault($package)
-    {
-        return $this->stability->getVersionStability($package, 'stable');
+        return Package::load($this, $packagename);
     }
 
     public function requestDownload(Package $package, $version = null)
     {
         if ($version === null) {
-            $version = $this->getVersionDefault($package)->getVersion();
+            $version = $package->getVersionDefault()->getVersion();
             return new RedirectResponse('?version=' . $version, 302);
         }
 
-        $versionInfo = $this->getVersionInfo($package, $version);
+        $versionInfo = $package->getVersionInfo($version);
         $timestamp = strtotime($versionInfo->getTime());
 
         $tag = $package->getName() . ':' . $version . '@' . $timestamp;
