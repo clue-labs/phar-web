@@ -1,7 +1,6 @@
 {% extends "layout.html" %}
 {% set stabilities = package.versionsPerStability %}
 {% set vendorname = package.nameOfVendor %}
-{% set filename = package.filename %}
 
 {% block title %}{{ package.name }} - phar project{% endblock %}
 
@@ -27,7 +26,7 @@
             {% if stability == "stable" %}
             <dt>latest stable</dt>
             <dd style="margin-bottom:0.5em">
-                <strong><a href="{{ filename }}" class="btn btn-primary">Download stable</a></strong>
+                <strong><a href="{{ url('download', {vendor: "#{vendorname}", name: "#{package.namesub}"}) }}" class="btn btn-primary">Download stable</a></strong>
             </dd>
             {% endif %}
             {% for version in versions %}
