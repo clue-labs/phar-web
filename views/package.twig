@@ -30,11 +30,22 @@
             </dd>
             {% endif %}
             {% for version in versions %}
+                {% set icon = "play-circle" %}
+                {% set status = "Build not yet started" %}
+                
+                {% if version.idOfBuild %}
+                    {% set build = version.build %}
+                    {% set status = "Build #" ~ build.id ~ ", Status: " ~ build.statusText %}
+                    {% set icon = attribute({"ok": "ok-sign", "error": "remove-sign", "processing": "refresh", "pending": "refresh"}, build.statusText) %}
+                {% endif %}
             <dt>{{version.id|escape}}</dt>
             <dd>
                 <a href="{{ url('download', {vendor: "#{vendorname}", name: "#{package.namesub}"}) }}?version={{version.id|escape}}" class="btn btn-primary">Download <strong>{{ version.id|escape }}</strong></a>
                 <p>
-                    <span class="updated">updated on <time>{{ version.date|date }}</time></span> <br />
+                    <span class="updated">
+                      <a href="#log{{version.idOfBuild}}" data-toggle="collapse"><i class="icon-{{ icon }}" title="{{ status }}"></i></a>
+                      updated on <time>{{ version.date|date }}</time>
+                    </span>
               
                     {% if version.bin %}
                     <strong class="label">Executable:</strong>
@@ -48,11 +59,10 @@
                     
                     {% if version.idOfBuild %}
                         {% set build = version.build %}
-                        Build: {{ build.id }}
-                        {% set status = build.statusText %}
-                        
-                        Status: {{ status }}
-                        <pre>{{- build.log|escape -}}</pre>
+                        <div id="log{{version.idOfBuild}}" class="collapse">
+                            <h3>Build log #{{ build.id }}</h3>
+                            <pre >{{- build.log|escape|default("<em>Waiting for worker to pick up job...</em>")|raw -}}</pre>
+                        </div>
                     {% endif %}
                 </p>
             </dd>
