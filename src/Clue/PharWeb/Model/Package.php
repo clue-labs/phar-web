@@ -3,9 +3,7 @@
 namespace Clue\PharWeb\Model;
 
 use Clue\PharWeb\PackageManager;
-
 use Clue\PharWeb\Stability;
-
 use Packagist\Api\Result\Package as PackagistPackage;
 
 class Package

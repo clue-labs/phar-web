@@ -2,6 +2,8 @@
 
 namespace Clue\PharWeb;
 
+use Clue\PharWeb\Model\Build;
+
 use Clue\PharWeb\Model\Vendor;
 use Clue\PharWeb\Model\Package;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -45,6 +47,11 @@ class PackageManager
         return Package::load($this, $packagename);
     }
 
+    public function getBuild($buildId)
+    {
+        return Build::load($buildId, $this);
+    }
+
     public function getRedis()
     {
         return Resque::redis();
@@ -59,20 +66,20 @@ class PackageManager
 
         $version = $package->getVersion($versionIdentifier);
 
-        $version->doEnsureHasJob();
+        $version->doEnsureHasBuild();
 
-        $jid = $version->getIdOfJob();
-        $status = $version->getStatus();
+        $bid = $version->getIdOfBuild();
+        $status = $version->getStatusOfBuild();
 
-        if ($status === false) {
-            throw new UnexpectedValueException('Found job ID "' . $jid . '", but could not track its status');
+        if ($status === Build::STATUS_NONE) {
+            throw new UnexpectedValueException('Found build ID "' . $bid . '", but could not track its status');
         }
 
-        if ($status === Resque_Job_Status::STATUS_FAILED) {
-            throw new UnexpectedValueException('Job with ID "' . $jid . '" failed');
+        if ($status === Build::STATUS_ERROR) {
+            throw new UnexpectedValueException('Build with ID "' . $bid . '" failed');
         }
 
-        if ($status !== Resque_Job_Status::STATUS_COMPLETE) {
+        if ($status !== Build::STATUS_OK) {
             $waiting = 1;
             sleep(1);
             return new RedirectResponse('?version=' . $versionIdentifier . '&waiting=' . $waiting, 302);

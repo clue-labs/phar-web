@@ -45,6 +45,15 @@
                         Unable to create phar for package with no bin defined
                     </p>
                     {% endif %}
+                    
+                    {% if version.idOfBuild %}
+                        {% set build = version.build %}
+                        Build: {{ build.id }}
+                        {% set status = build.statusText %}
+                        
+                        Status: {{ status }}
+                        <pre>{{- build.log|escape -}}</pre>
+                    {% endif %}
                 </p>
             </dd>
             {% endfor %}

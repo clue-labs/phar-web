@@ -48,6 +48,16 @@ class Version
         return $this->packagist->getName();
     }
 
+    public function getBuild()
+    {
+        return new Build($this->getIdOfBuild(), $this->manager);
+    }
+
+    public function getIdOfBuild()
+    {
+        return $this->manager->getRedis()->GET('package::' . $this->getNameOfPackage() . '::' . $this->getId() . '::build');
+    }
+
     public function getIdOfJob()
     {
         $redis = $this->manager->getRedis();
@@ -67,7 +77,12 @@ class Version
         return sys_get_temp_dir() . '/' . md5($this->getTag()) . '.phar';
     }
 
-    public function getStatus()
+    public function getStatusOfBuild()
+    {
+        return $this->getBuild()->getStatus();
+    }
+
+    public function getStatusOfJob()
     {
         $sob = new Resque_Job_Status($this->getIdOfJob());
         $status = $sob->get();
@@ -75,31 +90,39 @@ class Version
         return $status;
     }
 
-    public function doEnsureHasJob()
+    public function doEnsureHasBuild()
     {
-        $jid = $this->getIdOfJob();
+        $bid = $this->getIdOfBuild();
 
-        if ($jid === null) {
+        if ($bid === null) {
             $redis = $this->manager->getRedis();
-            $tag   = $this->getTag();
 
             // TODO: lock for very short duration
 
-            $jid = $redis->GET($tag);
+            $bid = $this->getIdOfBuild();
 
-            // check if job is still unknown (so avoid this race condition)
-            if ($jid === null) {
+            // check if build is still unknown (to avoid race condition)
+            if ($bid === null) {
+                $bid = $redis->INCR('id::build');
+
                 $jid = Resque::enqueue('build', 'Clue\\PharWeb\\Job\\Build', array(
                     'package' => $this->getNameOfPackage(),
                     'version' => $this->getId(),
                     'outfile' => $this->getOutfile(),
+                    'build'   => $bid
                 ), true);
 
-                $redis->SET($tag, $jid);
-                // TODO: unlock
+                $redis->MULTI();
+                $redis->SET('package::' . $this->getNameOfPackage() . '::' . $this->getId() . '::build', $bid);
+                $redis->SET('build::' . $bid . '::package', $this->getNameOfPackage());
+                $redis->SET('build::' . $bid . '::version', $this->getId());
+                $redis->SET('build::' . $bid . '::job', $jid);
+                $redis->SET('build::' . $bid . '::status', Build::STATUS_PENDING);
+                $redis->SET('build::' . $bid . '::dateStarted', date(DATE_ISO8601));
+                $redis->EXEC();
             }
-        }
 
-        return $this;
+            // TODO: unlock
+        }
     }
 }
