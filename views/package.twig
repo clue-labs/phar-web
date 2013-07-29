@@ -46,16 +46,6 @@
                       <a href="#log{{version.idOfBuild}}" data-toggle="collapse"><i class="icon-{{ icon }}" title="{{ status }}"></i></a>
                       updated on <time>{{ version.date|date }}</time>
                     </span>
-              
-                    {% if version.bin %}
-                    <strong class="label">Executable:</strong>
-                    <code>{{ version.bin|join(', ') }}</code>
-                    {% else %}
-                    <p class="text-warning">
-                        <strong class="label">Error:</strong>
-                        Unable to create phar for package with no bin defined
-                    </p>
-                    {% endif %}
                     
                     {% if version.idOfBuild %}
                         {% set build = version.build %}
