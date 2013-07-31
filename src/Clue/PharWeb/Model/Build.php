@@ -36,6 +36,32 @@ class Build
         return (int)$this->manager->getRedis()->GET('build::' . $this->id . '::status');
     }
 
+    public function getNameOfPackage()
+    {
+        return $this->manager->getRedis()->GET('build::' . $this->id . '::package');
+    }
+
+    /**
+     * @return Package
+     */
+    public function getPackage()
+    {
+        return $this->manager->getPackage($this->getNameOfPackage());
+    }
+
+    public function getIdOfVersion()
+    {
+        return $this->manager->getRedis()->GET('build::' . $this->id . '::version');
+    }
+
+    /**
+     * @return Version
+     */
+    public function getVersion()
+    {
+        return $this->getPackage()->getVersion($this->getIdOfVersion());
+    }
+
     public function getStatusText()
     {
         $l = array(
