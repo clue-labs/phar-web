@@ -99,4 +99,9 @@ class Build
     {
         $this->manager->getRedis()->SET('build::' . $this->id . '::log', $log);
     }
+
+    public function addLog($part)
+    {
+        $this->manager->getRedis()->APPEND('build::' . $this->id . '::log', $part);
+    }
 }
