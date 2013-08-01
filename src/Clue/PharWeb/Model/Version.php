@@ -115,6 +115,11 @@ class Version
                 $redis->MULTI();
                 $redis->SET('package::' . $this->getNameOfPackage() . '::' . $this->getId() . '::build', $bid);
                 $redis->SADD('package::' . $this->getNameOfPackage() . '::builds', $bid);
+
+                // store list of last 100 build IDs
+                $redis->lpush('build::last::started', $bid);
+                $redis->ltrim('build::last::started', 0, 99);
+
                 $redis->SET('build::' . $bid . '::package', $this->getNameOfPackage());
                 $redis->SET('build::' . $bid . '::version', $this->getId());
                 $redis->SET('build::' . $bid . '::job', $jid);
