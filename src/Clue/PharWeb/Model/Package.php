@@ -107,4 +107,37 @@ class Package
     {
         return $this->getNameSub() . '.phar';
     }
+
+
+    /**
+     *
+     * @param int $buildId
+     * @throws UnexpectedValueException
+     * @return Build
+     */
+    public function getBuild($buildId)
+    {
+        $build = Build::load($buildId, $this->manager);
+
+        if ($build->getNameOfPackage() !== $this->getName()) {
+            throw new UnexpectedValueException('Invalid package');
+        }
+
+        return $build;
+    }
+
+    /**
+     *
+     * @return Build[]
+     */
+    public function getBuilds()
+    {
+        $builds = array();
+
+        foreach ($this->manager->getRedis()->SMEMBERS('package::' . $this->getName() . '::builds') as $bid) {
+            $builds[$bid] = new Build($bid, $this->manager);
+        }
+
+        return $builds;
+    }
 }

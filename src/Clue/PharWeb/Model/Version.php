@@ -114,6 +114,7 @@ class Version
 
                 $redis->MULTI();
                 $redis->SET('package::' . $this->getNameOfPackage() . '::' . $this->getId() . '::build', $bid);
+                $redis->SADD('package::' . $this->getNameOfPackage() . '::builds', $bid);
                 $redis->SET('build::' . $bid . '::package', $this->getNameOfPackage());
                 $redis->SET('build::' . $bid . '::version', $this->getId());
                 $redis->SET('build::' . $bid . '::job', $jid);
