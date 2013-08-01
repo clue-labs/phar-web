@@ -24,9 +24,16 @@
     <div class="tab-pane{% if loop.first %} active{% endif %}" id="{{ stability }}">
         <dl class="dl-horizontal">
             {% if stability == "stable" %}
+            {% set id = attribute(versions|first, "id") %}
             <dt>latest stable</dt>
             <dd style="margin-bottom:0.5em">
-                <strong><a href="{{ url('download', {vendor: "#{vendorname}", name: "#{package.namesub}"}) }}" class="btn btn-primary">Download stable</a></strong>
+                
+                  <a href="{{ url('download', {vendor: "#{vendorname}", name: "#{package.namesub}"}) }}" class="btn btn-primary">
+                    <i class="icon-download icon-2x pull-left"></i>
+                    Download {{ package.filename }} <br />
+                    Version <strong>{{ id|escape }}</strong>
+                  </a>
+                  <p><i class="icon-circle-arrow-right" title="References {{ id|escape }}"></i> {{ id|escape }}</p>
             </dd>
             {% endif %}
             {% for version in versions %}
@@ -36,11 +43,14 @@
                 {% if version.idOfBuild %}
                     {% set build = version.build %}
                     {% set status = "Build #" ~ build.id ~ ", Status: " ~ build.statusText %}
-                    {% set icon = attribute({"ok": "ok-sign", "error": "remove-sign", "processing": "refresh", "pending": "refresh"}, build.statusText) %}
+                    {% set icon = attribute({"ok": "ok-sign", "error": "remove-sign", "processing": "refresh icon-spin", "pending": "refresh icon-spin"}, build.statusText) %}
                 {% endif %}
             <dt>{{version.id|escape}}</dt>
             <dd>
-                <a href="{{ url('download', {vendor: "#{vendorname}", name: "#{package.namesub}"}) }}?version={{version.id|escape}}" class="btn btn-primary">Download <strong>{{ version.id|escape }}</strong></a>
+                <a href="{{ url('download', {vendor: "#{vendorname}", name: "#{package.namesub}"}) }}?version={{version.id|escape}}" class="btn">
+                  <i class="icon-download icon-large"></i>
+                  Download <strong>{{ version.id|escape }}</strong>
+                </a>
                 <p>
                     <span class="updated">
                       <a href="#log{{version.idOfBuild}}" data-toggle="collapse"><i class="icon-{{ icon }}" title="{{ status }}"></i></a>
