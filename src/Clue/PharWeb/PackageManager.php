@@ -37,16 +37,32 @@ class PackageManager
         return $this->client;
     }
 
+
+    /**
+     *
+     * @param string $vendorname
+     * @return Vendor
+     */
     public function getVendor($vendorname)
     {
         return Vendor::load($this, $vendorname);
     }
 
+    /**
+     *
+     * @param string $packagename
+     * @return Package
+     */
     public function getPackage($packagename)
     {
         return Package::load($this, $packagename);
     }
 
+    /**
+     *
+     * @param int $buildId
+     * @return Build
+     */
     public function getBuild($buildId)
     {
         return Build::load($buildId, $this);
