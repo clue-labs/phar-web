@@ -5,6 +5,7 @@ namespace Clue\PharWeb\Model;
 use Clue\PharWeb\PackageManager;
 use Clue\PharWeb\Stability;
 use Packagist\Api\Result\Package as PackagistPackage;
+use UnexpectedValueException;
 
 class Package
 {
@@ -73,7 +74,7 @@ class Package
 
     /**
      *
-     * @param unknown_type $versionString
+     * @param string $versionString
      * @throws InvalidArgumentException
      * @return Version
      */
@@ -89,7 +90,12 @@ class Package
 
     public function getVersionDefault()
     {
-        return $this->manager->getStability()->getVersionStability($this->getVersions(), 'stable');
+        return $this->getVersionStability('stable');
+    }
+
+    public function getVersionStability($stability)
+    {
+        return $this->manager->getStability()->getVersionStability($this->getVersions(), $stability);
     }
 
     public function getStability()
